@@ -47,8 +47,7 @@ const projects = [
         "together its plates and working components."],
       ["Design focus",
         "The project focuses on tool construction, component positioning " +
-        "and assembly relationships. Its specific press operation will " +
-        "be documented when confirmed."]
+        "and assembly relationships."]
     ],
     images: [
       ["images/press-tool.png", "Press tool — assembled CAD view"]
@@ -91,7 +90,7 @@ const projects = [
       ["Design focus",
         "The exploded presentation communicates how the parts come " +
         "together. It demonstrates detailed modelling and assembly " +
-        "presentation; the mechanism's exact name will be added when confirmed."]
+        "presentation."]
     ],
     images: [
       ["images/assembly.png", "Mechanical assembly — exploded view"]
@@ -142,10 +141,10 @@ const projects = [
     id: "aerothon",
     title: "SAE AeroTHON UAV",
     category: "robotics",
-    credit: "Original CAD design",
+    credit: "Design & physical build",
     description:
-      "A UAV design with a custom payload-release mechanism " +
-      "and a CAD motion demonstration.",
+      "A UAV developed for SAE AeroTHON, with a physical aircraft " +
+      "build and a custom payload-release CAD motion demonstration.",
     story: [
       ["The work",
         "I developed this design for SAE AeroTHON, considering the " +
@@ -159,7 +158,7 @@ const projects = [
         "research, which uses a ready-made frame."]
     ],
     images: [
-      ["images/aerothon.png", "SAE AeroTHON UAV — overall CAD assembly"]
+      ["images/aerothon.png", "Physical UAV built for SAE AeroTHON"]
     ]
   },
   {
@@ -215,9 +214,9 @@ const projects = [
       ["Attribution",
         "The base geometry was downloaded and is not claimed as my " +
         "original design. My contribution was editing the existing model."],
-      ["Further documentation",
-        "The original source and specific modifications will be added " +
-        "when documented."]
+      ["Learning focus",
+        "Working with an existing model provided practice in inspecting " +
+        "and editing CAD geometry. The original base model is externally sourced."]
     ],
     images: [
       ["images/adapted-robot.png", "White-and-blue robot — adapted model"]
@@ -300,7 +299,7 @@ function renderProjects(category = "all") {
   );
 
   grid.innerHTML = selected.map(project => `
-    <article class="project-card reveal">
+    <article class="project-card">
       <button
         class="project-image-button"
         type="button"
@@ -310,11 +309,14 @@ function renderProjects(category = "all") {
         <img
           src="${project.images[0][0]}"
           alt="${project.images[0][1]}"
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          width="900"
+          height="650"
         >
       </button>
 
-      <div class="project-body">
+      <div class="project-body reveal">
         <span class="badge ${
           project.category === "adapted" ? "adapted" : ""
         }">${project.credit}</span>
@@ -592,3 +594,13 @@ motionPreference.addEventListener("change", () => {
 renderProjects();
 observeReveals();
 updatePage();
+// A visible message makes a genuine missing file easier to diagnose.
+grid.addEventListener("error", event => {
+  if (!(event.target instanceof HTMLImageElement)) return;
+  const image = event.target;
+  if (image.parentElement.querySelector(".image-error")) return;
+  const note = document.createElement("span");
+  note.className = "image-error";
+  note.textContent = "Preview could not load. Open the project to view its gallery.";
+  image.parentElement.append(note);
+}, true);
